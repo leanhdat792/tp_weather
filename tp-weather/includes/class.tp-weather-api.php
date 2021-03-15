@@ -1,0 +1,64 @@
+<?php
+
+if ( !function_exists( 'add_action' ) ) {
+	echo 'Hi there!  I\'m just a plugin, not much I can do when called directly.';
+	exit;
+}
+
+class TP_Weather_API {
+	//Lay chuoi JSON
+	public static function get_JSON($json) {
+		return json_decode($json, true);
+	}
+
+	//Gui Request toi Website
+	public static function request($city = 'Ho+Chi+Minh', $like = true, $mode = 'json') {
+		$type = ($like) ? 'like' : 'accurate';
+		$city = urlencode(trim($city));
+		$url = "http://api.openweathermap.org/data/2.5/find?q={$city}&appid=72ba10517e2e456cb7dda20b65b12385&type={$type}&mode={$mode}";
+		@$fget = file_get_contents($url);
+		if($fget) {
+			return self::get_JSON($fget);
+		}
+		return false;
+	}
+
+	//Lay duoc du lieu Weather
+	public static function get_weather($data = [], $mode = 'json') {
+		if ($data) {
+			$return = [];
+			foreach ($data as $city_name) {
+				$url = "http://api.openweathermap.org/data/2.5/weather?q={$city_name}&appid=72ba10517e2e456cb7dda20b65b12385&units=metric&mode={$mode}";
+				@$fget = file_get_contents($url);
+				if ($fget) {
+					$return[] = self::get_JSON($fget);
+				}
+			}
+
+			if($return) {
+				return $return;
+			}
+		}
+		return false;
+	}
+
+	public static function get_temperature($temp = 0, $option = 'celsius'){
+		switch ($option) {
+			case 'celsius':
+				return $temp . 'C';
+				break;
+
+			case 'fahrenherit':
+				return ($temp * 9 / 5 + 32) . 'F';
+				break;
+
+			default:
+				# code...
+				break;
+		}
+	}
+
+	public static function get_weather_icon($code = '01d') {
+		return "http://openweathermap.org/img/wn/{$code}.png";
+	}
+}

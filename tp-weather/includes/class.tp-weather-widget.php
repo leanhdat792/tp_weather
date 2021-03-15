@@ -1,0 +1,38 @@
+<?php
+
+if ( !function_exists( 'add_action' ) ) {
+	echo 'Hi there!  I\'m just a plugin, not much I can do when called directly.';
+	exit;
+}
+
+class TP_Weather_Widget extends WP_Widget {
+	public function __construct() {
+		parent::__construct('tp-weather-widget', __('TP Weather Widget', 'tp_weather'), array( 'description' => __( 'Simple Weather Widget' , 'tp_weather' )));
+		add_action("widgets_init", function() {
+			register_widget('TP_Weather_Widget');
+		});
+
+		add_action('wp_enqueue_scripts', function(){
+			// tp-css is a ID of HTML
+			wp_register_style('tp-css', TP_WEATHER_PLUGIN_URL . 'scripts/css/style.css');
+			wp_enqueue_style('tp-css');
+		});
+	}
+
+	public function form($instance) {
+		$title = (isset($instance['title']) && !empty($instance['title'])) ? apply_filters('widget_title', $instance['title']) : __('TP Weather Widget', 'tp_weather');
+		$unit = (isset($instance['unit']) && !empty($instance['unit'])) ? $instance['unit'] : 'celsius';
+		require(TP_WEATHER_PLUGIN_DIR . '/views/tp-weather-widget-form.php');
+	}
+
+	public function update($new_instance, $old_instance) {
+		$instance = [];
+		$instance['title'] = (isset($new_instance['title']) && !empty($new_instance['title'])) ? apply_filters('widget_title', $new_instance['title']) : __('TP Weather Widget', 'tp_weather');
+		$instance['unit'] = (isset($new_instance['unit']) && !empty($new_instance['unit'])) ? $new_instance['unit'] : 'celsius';
+		return $instance;
+	}
+
+	public function widget($args, $instance) {
+		require(TP_WEATHER_PLUGIN_DIR . '/views/tp-weather-widget-view.php');
+	}
+}

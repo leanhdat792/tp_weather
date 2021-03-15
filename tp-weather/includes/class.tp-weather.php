@@ -7,7 +7,8 @@ if ( !function_exists( 'add_action' ) ) {
 
 class TP_Weather {
 	public function __construct(){
-
+		$tp_weather_widget = new TP_Weather_Widget();
+		$tp_weather_setting = new TP_Weather_Setting();
 	}
 
 	public function activation_hook() {
