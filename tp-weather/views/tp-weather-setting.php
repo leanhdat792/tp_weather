@@ -1,9 +1,9 @@
 <div class="wrap tp-app">
     <h2>Settings</h2>
     <form name="post" action="options.php" method="post" id="post" autocomplete="off">
-        <input type="hidden" name="option_page" value="tp_weather_group">
+        <input type="hidden" name="option_page" value="<?php echo $option_group; ?>">
         <input type="hidden" name="action" value="update">
-        <input type="hidden" id="_wpnonce" name="_wpnonce" value="64979b800e"><input type="hidden" name="_wp_http_referer" value="/qhshop/wp-admin/options-general.php?page=tp_weather">
+        <?php wp_nonce_field($option_group . '-options'); ?>
         <div class="tp-city-list"></div>
 
         <table class="form-table">

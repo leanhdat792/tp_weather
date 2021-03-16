@@ -5,7 +5,7 @@
 <p>
     <label for="widget-tp-weather-widget-3-unit"><?php _e('Unit:', 'tp_weather'); ?></label>
     <select class="widefat" id="<?php echo $this->get_field_id('unit'); ?>" name="<?php echo $this->get_field_name('unit'); ?>">
-        <option value="fahrenheit" <?php echo ($unit == 'fahrenherit') ? 'selected' : ''; ?>>Fahrenheit (F)</option>
+        <option value="fahrenheit" <?php echo ($unit == 'fahrenheit') ? 'selected' : ''; ?>>Fahrenheit (F)</option>
         <option value="celsius" <?php echo ($unit == 'celsius') ? 'selected' : ''; ?>="">Celsius (C)</option>
     </select>
 </p>

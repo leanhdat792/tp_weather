@@ -20,6 +20,17 @@ class TP_Weather_Setting {
 				[$this, 'create_page']
 			);
 		});
+
+		add_action('admin_init', [$this, 'register_setting']);
+		add_action('admin_enqueue_scripts', function(){
+			wp_register_script('tp-js', TP_WEATHER_PLUGIN_URL . 'scripts/js/functions.js', ['jquery']);
+			wp_localize_script('tp-js', 'tp', [
+				'url' => admin_url('admin-ajax.php')
+			]);
+			wp_enqueue_script('tp-js');
+		});
+
+		add_action('wp_ajax_search_city_ajax', [$this, 'search_city_ajax']);
 	}
 
 	public function create_page() {
@@ -29,7 +40,7 @@ class TP_Weather_Setting {
 
 	public function register_setting() {
 		register_setting(
-			$this->option_group;
+			$this->option_group,
 			'tp_weather_setting',
 			[$this, 'save_setting']
 		);
@@ -39,11 +50,18 @@ class TP_Weather_Setting {
 		$new_input = [];
 		if(isset($input['city_name']) && !empty($input['city_name'])) {
 			foreach ($input['city_name'] as $value) {
-				$new_input['city_name'] = urlencode(trim($value));
+				$new_input['city_name'][] = preg_replace('/[ ]/u', '+', trim($value));
 			}
 		} else {
 			$new_input['city_name'][] = 'Ho+Chi+Minh';
 		}
 		return $new_input;
+	}
+
+	public function search_city_ajax() {
+		if(isset($_POST['city']) && !empty($_POST['city'])) {
+			$data = TP_Weather_API::request($_POST['city']);
+			wp_send_json_success($data);
+		}
 	}
 }

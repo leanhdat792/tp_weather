@@ -1,55 +1,59 @@
-<aside id="tp-weather-widget-3" class="widget tp-weather-widget">
-    <h2 class="widget-title">TP Weather Widget</h2>
+<aside id="<?php echo $args['widget_id']; ?>" class="widget tp-weather-widget">
+    <h2 class="widget-title"><?php echo $title; ?></h2>
 
     <div class="tp-wrap">
         <select class="tp-weather-selector">
-            <option value="tp-weather-1566083" data-weather-icon="01d" data-weather-text="Clear">Thành Phố Hồ Chí Minh</option>
-            <option value="tp-weather-1561096" data-weather-icon="01d" data-weather-text="Clear">Hanoi</option>
-            <option value="tp-weather-1039536" data-weather-icon="02d" data-weather-text="Clear">Maxixe</option>
-            <option value="tp-weather-1816790" data-weather-icon="03d" data-weather-text="Clouds">Beibei</option>
-            <option value="tp-weather-1816670" data-weather-icon="02d" data-weather-text="Clear">Beijing</option>
-            <option value="tp-weather-1880252" data-weather-icon="04d" data-weather-text="Clouds">Singapore</option>
-            <option value="tp-weather-4791160" data-weather-icon="10n" data-weather-text="Rain">Vienna</option>
-            <option value="tp-weather-6058560" data-weather-icon="04n" data-weather-text="Clouds">London</option>
-            <option value="tp-weather-360630" data-weather-icon="01d" data-weather-text="Clear">Cairo</option>
+            <?php
+                if ($data) {
+                    foreach ($data as $city) {
+                        printf('<option value="tp-weather-%s" data-weather-icon="%s" data-weather-text="%s">%s</option>', $city['id'], $city['weather'][0]['icon'], $city['weather'][0]['main'], $city['name']);
+                    }
+                }
+            ?>
         </select>
-        <div class="tp-weather-status">
-            <img class="tp-weather-icon" src="http://openweathermap.org/img/w/01d.png" alt="Weather Icon">
-            <span class="tp-weather-text">Clear</span>
-        </div>
-        <table class="tp-weather-result table tp-active" id="tp-weather-1566083">
+        <?php
+            if($data):
+        ?>
+            <div class="tp-weather-status">
+                <img class="tp-weather-icon" src="http://openweathermap.org/img/w/01d.png" alt="Weather Icon">
+                <span class="tp-weather-text">Clear</span>
+            </div>
+        <?php
+            foreach ($data as $key => $city) :
+        ?>
+        <table class="tp-weather-result table <?php echo ($key == 0) ? 'tp-active' : ''; ?>" id="tp-weather-<?php echo $city['id']; ?>">
             <tbody>
                 <tr>
                     <td>City</td>
-                    <td>Thành Phố Hồ Chí Minh</td>
+                    <td><?php echo $city['name']; ?></td>
                 </tr>
                 <tr>
                     <td>Sunrise</td>
-                    <td>22:48</td>
+                    <td><?php echo date('H:i', $city['sys']['sunrise']) ?></td>
                 </tr>
                 <tr>
                     <td>Sunset</td>
-                    <td>11:04</td>
+                    <td><?php echo date('H:i', $city['sys']['sunset']) ?></td>
                 </tr>
                 <tr>
                     <td>Pressure</td>
-                    <td>51hpa</td>
+                    <td><?php echo $city['main']['pressure']; ?>hpa</td>
                 </tr>
                 <tr>
                     <td>Humidity</td>
-                    <td>51%</td>
+                    <td><?php echo $city['main']['humidity']; ?>%</td>
                 </tr>
                 <tr>
                     <td>Temp Min</td>
-                    <td>33.658C</td>
+                    <td><?php echo TP_Weather_API::get_temperature($city['main']['temp_min'], $widget_option['unit']); ?></td>
                 </tr>
                 <tr>
                     <td>Temp Max</td>
-                    <td>33.658C</td>
+                    <td><?php echo TP_Weather_API::get_temperature($city['main']['temp_max'], $widget_option['unit']); ?></td>
                 </tr>
                 <tr>
                     <td>Wind</td>
-                    <td>4.06km/h</td>
+                    <td><?php echo $city['clouds']['all']; ?>km/h</td>
                 </tr>
                 <tr>
                     <td>Cloud</td>
@@ -57,45 +61,13 @@
                 </tr>
             </tbody>
         </table>
-
-        <table class="tp-weather-result table " id="tp-weather-1561096">
-            <tbody><tr>
-                    <td>City</td>
-                    <td>Hanoi</td>
-                </tr>
-                <tr>
-                    <td>Sunrise</td>
-                    <td>22:47</td>
-                </tr>
-                <tr>
-                    <td>Sunset</td>
-                    <td>11:12</td>
-                </tr>
-                <tr>
-                    <td>Pressure</td>
-                    <td>56hpa</td>
-                </tr>
-                <tr>
-                    <td>Humidity</td>
-                    <td>56%</td>
-                </tr>
-                <tr>
-                    <td>Temp Min</td>
-                    <td>34.758C</td>
-                </tr>
-                <tr>
-                    <td>Temp Max</td>
-                    <td>34.758C</td>
-                </tr>
-                <tr>
-                    <td>Wind</td>
-                    <td>2.71km/h</td>
-                </tr>
-                <tr>
-                    <td>Cloud</td>
-                    <td>0%</td>
-                </tr>
-            </tbody>
-        </table>
+        <?php
+            endforeach;
+            else :
+                echo '<table>';
+                echo '<tr><td>No Result.</td></tr>';
+                echo '</table>';
+            endif;
+        ?>
     </div>
 </aside>

@@ -25,7 +25,8 @@ class TP_Weather_API {
 
 	//Lay duoc du lieu Weather
 	public static function get_weather($data = [], $mode = 'json') {
-		if ($data) {
+		$old_data = get_transient('tp_weather_data');
+		if (!$old_data && $data) {
 			$return = [];
 			foreach ($data as $city_name) {
 				$url = "http://api.openweathermap.org/data/2.5/weather?q={$city_name}&appid=72ba10517e2e456cb7dda20b65b12385&units=metric&mode={$mode}";
@@ -36,7 +37,18 @@ class TP_Weather_API {
 			}
 
 			if($return) {
+				set_transient( 'tp_weather_data', $return, 10800 );
 				return $return;
+			}
+		} else {
+			foreach ($old_data as $key => $value) {
+				if (empty($value)) {
+					unset($old_data[$key]);
+				}
+			}
+			if($old_data){
+				$old_data = array_values($old_data);
+				return $old_data;
 			}
 		}
 		return false;
@@ -48,7 +60,7 @@ class TP_Weather_API {
 				return $temp . 'C';
 				break;
 
-			case 'fahrenherit':
+			case 'fahrenheit':
 				return ($temp * 9 / 5 + 32) . 'F';
 				break;
 

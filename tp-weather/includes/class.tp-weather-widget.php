@@ -16,6 +16,12 @@ class TP_Weather_Widget extends WP_Widget {
 			// tp-css is a ID of HTML
 			wp_register_style('tp-css', TP_WEATHER_PLUGIN_URL . 'scripts/css/style.css');
 			wp_enqueue_style('tp-css');
+
+			wp_register_script('tp-js', TP_WEATHER_PLUGIN_URL . 'scripts/js/functions.js', ['jquery']);
+			wp_localize_script('tp-js', 'tp', [
+				'url' => admin_url('admin-ajax.php')
+			]);
+			wp_enqueue_script('tp-js');
 		});
 	}
 
@@ -33,6 +39,14 @@ class TP_Weather_Widget extends WP_Widget {
 	}
 
 	public function widget($args, $instance) {
+		$title = (isset($instance['title']) && !empty($instance['title'])) ? apply_filters('widget_title', $instance['title']) : __('TP Weather Widget', 'tp_weather');
+		if(get_option('tp_weather_setting')) {
+			$city_name = get_option('tp_weather_setting')['city_name'];
+		} else {
+			$city_name = 'Ho+Chi+Minh';
+		}
+		$widget_option = $instance;
+		$data = TP_Weather_API::get_weather($city_name);
 		require(TP_WEATHER_PLUGIN_DIR . '/views/tp-weather-widget-view.php');
 	}
 }
